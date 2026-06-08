@@ -257,14 +257,13 @@ const GASTOS = [
   {id:'master',cat:'deudas',nombre:'Mastercard BNA',meta:'Pagado $600.000 · mínimo $0',monto:600000,pagado:true,fuente:'caja',badge:'bg',badgeLbl:'✓ Pagado',editable:false},
   {id:'terapia',cat:'salud',nombre:'Terapia (4 sesiones)',meta:'$35.000 c/u · lunes',monto:140000,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Normal',editable:true},
   {id:'wellhub',cat:'salud',nombre:'Wellhub (gimnasio)',meta:'$85.000 + $31.900',monto:116900,pagado:true,fuente:'tdc',badge:'bg',badgeLbl:'✓ Pagado',editable:false},
-  {id:'nacho',cat:'nacho',nombre:'Alimento Nacho',meta:'Pendiente · con Mastercard BNA',monto:79000,pagado:false,fuente:'tdc',badge:'bb',badgeLbl:'Pendiente',editable:true},
   {id:'uade',cat:'edu',nombre:'UADE — Lic. Psicología',meta:'Desde agosto · $181.944/mes',monto:0,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Futuro',editable:false},
 ];
 
 const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 
 function recalc() {
-  const cats = {hogar:0,deudas:0,salud:0,nacho:0,edu:0};
+  const cats = {hogar:0,deudas:0,salud:0,edu:0};
   let pend = 0, pag = 0;
   GASTOS.forEach(g => {
     cats[g.cat] = (cats[g.cat]||0) + g.monto;
