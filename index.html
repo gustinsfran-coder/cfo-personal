@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFO Personal — Gus</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+:root{--bg:#f0ede8;--white:#fff;--card:#fff;--border:#e0dbd4;--text:#1c1917;--muted:#9c9488;--green:#166534;--gbg:#dcfce7;--red:#991b1b;--rbg:#fee2e2;--yellow:#854d0e;--ybg:#fef3c7;--blue:#1e3a8a;--bbg:#dbeafe;--purple:#581c87;--pbg:#f3e8ff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;padding-bottom:80px;font-size:15px;}
+.nav{background:#1c1917;display:flex;position:sticky;top:0;z-index:100;border-bottom:1px solid #333;}
+.nt{flex:1;padding:13px 4px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:#555;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;}
+.nt.on{color:#e8d5a3;border-bottom-color:#e8d5a3;}
+.page{display:none;padding:16px;}
+.page.on{display:block;}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
+.hero{background:#1c1917;border-radius:16px;padding:20px;margin-bottom:14px;color:#fff;}
+.hero-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#555;font-family:'DM Mono',monospace;margin-bottom:8px;}
+.hero-num{font-size:34px;font-weight:800;letter-spacing:-1px;color:#e8d5a3;font-family:'DM Mono',monospace;}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;}
+.edit-btn{background:rgba(232,213,163,.1);border:1px solid rgba(232,213,163,.2);color:#e8d5a3;border-radius:8px;padding:7px 13px;font-size:11px;cursor:pointer;font-family:'DM Mono',monospace;}
+.edit-btn:hover{background:rgba(232,213,163,.2);}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.stat{background:rgba(255,255,255,.05);border-radius:8px;padding:10px;}
+.stat-lbl{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:3px;}
+.stat-val{font-size:13px;font-family:'DM Mono',monospace;font-weight:500;}
+.bar-bg{background:var(--bg);border-radius:6px;height:8px;overflow:hidden;border:1px solid var(--border);margin:4px 0 8px;}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s;}
+.sec-hdr{display:flex;align-items:center;gap:8px;margin:16px 0 8px;font-size:13px;font-weight:700;}
+.sec-total{margin-left:auto;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.gasto{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:11px 13px;margin-bottom:6px;display:flex;align-items:center;gap:10px;transition:opacity .2s;}
+.gasto.pagado{opacity:.5;}
+.gasto.pagado .gname{text-decoration:line-through;color:var(--muted);}
+.gcheck{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;transition:all .2s;background:var(--card);}
+.gcheck.on{background:var(--green);border-color:var(--green);color:#fff;}
+.ginfo{flex:1;min-width:0;}
+.gname{font-size:13px;font-weight:600;}
+.gmeta{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px;}
+.gr{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.gamount{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;cursor:pointer;border-bottom:1.5px dashed var(--border);}
+.gamount:hover{color:var(--blue);border-color:var(--blue);}
+.gamount.nc{cursor:default;border:none;color:var(--muted);}
+.badge{font-size:9px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;font-weight:600;}
+.br{background:var(--rbg);color:var(--red);}
+.by{background:var(--ybg);color:var(--yellow);}
+.bb{background:var(--bbg);color:var(--blue);}
+.bg{background:var(--gbg);color:var(--green);}
+.bp{background:var(--pbg);color:var(--purple);}
+.al{border-radius:10px;padding:11px 13px;display:flex;gap:10px;border:1.5px solid;margin-bottom:8px;}
+.al-r{background:var(--rbg);border-color:#fca5a5;}.al-r .al-title{color:var(--red);}
+.al-y{background:var(--ybg);border-color:#fcd34d;}.al-y .al-title{color:var(--yellow);}
+.al-g{background:var(--gbg);border-color:#86efac;}.al-g .al-title{color:var(--green);}
+.al-b{background:var(--bbg);border-color:#93c5fd;}.al-b .al-title{color:var(--blue);}
+.al-title{font-size:12px;font-weight:700;}
+.al-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.chat-msgs{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px;height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.cmsg{display:flex;gap:8px;}
+.cav{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;background:#1c1917;color:#e8d5a3;}
+.cav.u{background:var(--bbg);color:var(--blue);}
+.cbub{font-size:12px;line-height:1.6;padding:9px 12px;border-radius:10px;background:var(--card);border:1px solid var(--border);max-width:88%;}
+.muser{flex-direction:row-reverse;}
+.muser .cbub{background:var(--bbg);border-color:#93c5fd;}
+.cinput-row{display:flex;gap:8px;}
+.cinp{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--text);outline:none;}
+.cinp:focus{border-color:#1c1917;}
+.cinp::placeholder{color:var(--muted);}
+.cbtn{background:#1c1917;color:#e8d5a3;border:none;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer;}
+.obj-prog{background:var(--bg);border-radius:8px;height:12px;overflow:hidden;border:1px solid var(--border);margin:10px 0 5px;}
+.obj-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .5s;}
+.obj-lbls{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);}
+.deuda-card{background:var(--rbg);border:1.5px solid #fca5a5;border-radius:14px;padding:16px;margin-bottom:12px;}
+.dr{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.dr:last-child{border:none;}
+.dk{color:var(--muted);}
+.dv{font-family:'DM Mono',monospace;font-weight:600;}
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
+.mbg.on{display:flex;}
+.mbox{background:#fff;border-radius:16px;padding:22px;width:88%;max-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.mtitle{font-size:15px;font-weight:800;margin-bottom:14px;}
+.mlbl{font-size:11px;color:var(--muted);margin-bottom:5px;display:block;}
+.minp{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:20px;font-family:'DM Mono',monospace;font-weight:700;color:var(--text);outline:none;margin-bottom:14px;}
+.minp:focus{border-color:#1c1917;}
+.mbtns{display:flex;gap:8px;}
+.mcancel{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;}
+.mok{flex:1;background:#1c1917;color:#e8d5a3;border:none;border-radius:8px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="nt on" onclick="showPage('dash',this)">📊 Inicio</button>
+  <button class="nt" onclick="showPage('gastos',this)">💸 Gastos</button>
+  <button class="nt" onclick="showPage('chat',this)">💬 Chat</button>
+  <button class="nt" onclick="showPage('obj',this)">🎯 Objetivos</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page on" id="page-dash">
+  <div style="margin:16px 0 14px;display:flex;justify-content:space-between;align-items:flex-start;">
+    <div>
+      <div style="font-size:20px;font-weight:800;">Dashboard</div>
+      <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;" id="fecha-txt"></div>
+    </div>
+    <div style="text-align:right;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;" id="dias-txt"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-lbl">Caja Santander — 195-034944/6</div>
+    <div class="hero-row">
+      <div class="hero-num" id="hero-num">$0</div>
+      <button class="edit-btn" onclick="abrirCaja()">✏ Editar</button>
+    </div>
+    <div class="grid3">
+      <div class="stat"><div class="stat-lbl">Comprometido</div><div class="stat-val" id="st-comp" style="color:#f87171;">—</div></div>
+      <div class="stat"><div class="stat-lbl">Disponible</div><div class="stat-val" id="st-disp" style="color:#4ade80;">—</div></div>
+      <div class="stat"><div class="stat-lbl">Pagado</div><div class="stat-val" id="st-pag" style="color:#a0a0a0;">—</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:12px;font-weight:700;margin-bottom:10px;">Uso de caja</div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:2px;"><span>Comprometido</span><span id="pct-comp-txt">0%</span></div>
+    <div class="bar-bg"><div class="bar-fill" id="bar-comp" style="background:var(--red);width:0%;"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:2px;"><span>Pagado</span><span id="pct-pag-txt">0%</span></div>
+    <div class="bar-bg"><div class="bar-fill" id="bar-pag" style="background:var(--green);width:0%;"></div></div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:12px;font-weight:700;margin-bottom:8px;">Gastos por categoría</div>
+    <div id="cat-bars"></div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:12px;font-weight:700;margin-bottom:8px;">⚡ Alertas activas</div>
+    <div class="al al-r"><div><div class="al-title">BBVA — mínimo $491.720 · vence 05/06</div><div class="al-desc">Llamar al 0800-333-0303 para confirmar si el Plan V cubrió el mínimo</div></div></div>
+    <div class="al al-r"><div><div class="al-title">Patagonia $603.472 · vence 05/06</div><div class="al-desc">Transferencia manual obligatoria desde Santander</div></div></div>
+    <div class="al al-y"><div><div class="al-title">Expensas $219.233 · vence 12/06</div><div class="al-desc">Cupón #1794 · Sinclair 3044</div></div></div>
+    <div class="al al-b"><div><div class="al-title">BBVA sube comisión a $38.000 desde agosto</div><div class="al-desc">Visa Gold · contemplar en presupuesto</div></div></div>
+    <div class="al al-g"><div><div class="al-title">BBVA Plan V activo — NO usar la tarjeta</div><div class="al-desc">24 cuotas $139.858 · saldo $739.498</div></div></div>
+  </div>
+</div>
+
+<!-- GASTOS -->
+<div class="page" id="page-gastos">
+  <div style="margin-bottom:8px;">
+    <div style="font-size:20px;font-weight:800;">Gastos del mes</div>
+    <div style="font-size:11px;color:var(--muted);">Tocá ✓ para marcar pagado · tocá el importe para editar</div>
+  </div>
+
+  <div class="sec-hdr">🏠 Hogar <span class="sec-total" id="t-hogar"></span></div>
+  <div id="sec-hogar"></div>
+
+  <div class="sec-hdr">💳 Deudas <span class="sec-total" id="t-deudas"></span></div>
+  <div id="sec-deudas"></div>
+
+  <div class="sec-hdr">🏥 Salud <span class="sec-total" id="t-salud"></span></div>
+  <div id="sec-salud"></div>
+
+  <div class="sec-hdr">🐕 Nacho <span class="sec-total" id="t-nacho"></span></div>
+  <div id="sec-nacho"></div>
+
+  <div class="sec-hdr">📚 Educación <span class="sec-total" id="t-edu"></span></div>
+  <div id="sec-edu"></div>
+</div>
+
+<!-- CHAT -->
+<div class="page" id="page-chat">
+  <div style="font-size:20px;font-weight:800;margin-bottom:14px;">Chat</div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="cinput-row">
+    <input type="text" class="cinp" id="cinp" placeholder="Reportá un pago o preguntá algo..." />
+    <button class="cbtn" onclick="enviar()">↑</button>
+  </div>
+</div>
+
+<!-- OBJETIVOS -->
+<div class="page" id="page-obj">
+  <div style="font-size:20px;font-weight:800;margin-bottom:14px;">Objetivos</div>
+
+  <div class="card">
+    <div style="font-size:14px;font-weight:700;">🎯 Fondo mudanza / renovación</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:3px;">Contrato vence nov 2026 · meta $1.500.000</div>
+    <div class="obj-prog"><div class="obj-fill" id="obj-fill" style="width:0%;"></div></div>
+    <div class="obj-lbls"><span id="obj-actual">$0 ahorrado</span><span>Meta $1.500.000</span></div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:10px;">Aguinaldo jun → cancelar Patagonia P1 ($372.441) → libera $62.884/mes → fondo jul-oct.</div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <input type="number" id="obj-inp" placeholder="Actualizar ahorro..." style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;" />
+      <button onclick="updateObj()" style="background:#1c1917;color:#e8d5a3;border:none;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;">OK</button>
+    </div>
+  </div>
+
+  <div class="deuda-card">
+    <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px;">Deuda total acumulada</div>
+    <div style="font-size:24px;font-weight:800;color:var(--red);font-family:'DM Mono',monospace;margin-bottom:12px;">~$9.686.845</div>
+    <div class="dr"><span class="dk">Patagonia (4 préstamos)</span><span class="dv">$4.581.680</span></div>
+    <div class="dr"><span class="dk">BBVA Plan V</span><span class="dv">$739.498</span></div>
+    <div class="dr"><span class="dk">Visa BNA</span><span class="dv">~$766.000</span></div>
+    <div class="dr"><span class="dk">Mastercard BNA</span><span class="dv">~$293.115</span></div>
+    <div class="dr"><span class="dk">Mercado Pago</span><span class="dv">~$316.000</span></div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🗂 Datos fijos</div>
+    <div style="font-size:12px;line-height:1.9;color:var(--muted);">
+      <strong style="color:var(--text);">Ingresos</strong> $2.982.003/mes<br>
+      <strong style="color:var(--text);">Cobro</strong> ~29-30 de cada mes<br>
+      <strong style="color:var(--text);">Cuenta operativa</strong> Santander 195-034944/6<br>
+      <strong style="color:var(--text);">Regla de pagos</strong> TODO manual desde Santander<br>
+      <strong style="color:var(--text);">BBVA</strong> Plan V · NO usar · hasta jun 2028<br>
+      <strong style="color:var(--text);">Alquiler</strong> IPC c/3 meses · próx. ajuste sep 2026<br>
+      <strong style="color:var(--text);">UADE</strong> Psicología · Monserrat Noche · desde ago 2026
+    </div>
+  </div>
+</div>
+
+<!-- MODALES -->
+<div class="mbg" id="m-monto">
+  <div class="mbox">
+    <div class="mtitle" id="m-title">Editar importe</div>
+    <label class="mlbl">Nuevo importe</label>
+    <input type="number" class="minp" id="m-inp" />
+    <div class="mbtns">
+      <button class="mcancel" onclick="cerrarM('m-monto')">Cancelar</button>
+      <button class="mok" onclick="confirmarM()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="mbg" id="m-caja">
+  <div class="mbox">
+    <div class="mtitle">Actualizar caja</div>
+    <label class="mlbl">Saldo actual en Santander</label>
+    <input type="number" class="minp" id="caja-inp" />
+    <div class="mbtns">
+      <button class="mcancel" onclick="cerrarM('m-caja')">Cancelar</button>
+      <button class="mok" onclick="confirmarCaja()">Actualizar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY = 'gus_cfo_v6';
+let CAJA = 1200000;
+let amtTarget = null;
+
+const GASTOS = [
+  {id:'alquiler',cat:'hogar',nombre:'Alquiler',meta:'Pagado jun · IPC · próx. ajuste sep 2026',monto:622378,pagado:true,fuente:'tdc',badge:'bg',badgeLbl:'✓ Pagado',editable:false},
+  {id:'expensas',cat:'hogar',nombre:'Expensas',meta:'Vto 12/06 · Cupón #1794',monto:219233,pagado:false,fuente:'caja',badge:'by',badgeLbl:'Urgente',editable:true},
+  {id:'edenor',cat:'hogar',nombre:'Edenor (luz)',meta:'Vto ~10/06 · actualizar con boleta',monto:38792,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Normal',editable:true},
+  {id:'aysa',cat:'hogar',nombre:'AySA (agua)',meta:'Vto ~10/06 · actualizar con boleta',monto:72625,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Normal',editable:true},
+  {id:'mono',cat:'hogar',nombre:'Monotributo',meta:'Vto ~10/06',monto:41000,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Normal',editable:true},
+  {id:'patagonia',cat:'deudas',nombre:'Patagonia (4 préstamos)',meta:'Vto 05/06 · transferencia manual',monto:603472,pagado:false,fuente:'caja',badge:'br',badgeLbl:'Crítico',editable:true},
+  {id:'bbva',cat:'deudas',nombre:'BBVA — mínimo',meta:'Vto 05/06 · confirmar con banco primero',monto:491720,pagado:false,fuente:'caja',badge:'br',badgeLbl:'Crítico',editable:true},
+  {id:'mp',cat:'deudas',nombre:'Mercado Pago',meta:'Vto 10/06 · 2 préstamos',monto:83617,pagado:false,fuente:'caja',badge:'by',badgeLbl:'Urgente',editable:true},
+  {id:'visa',cat:'deudas',nombre:'Visa BNA — mínimo',meta:'Vto ~20/06 · confirmar con resumen',monto:0,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Esperar',editable:true},
+  {id:'master',cat:'deudas',nombre:'Mastercard BNA',meta:'Pagado $600.000 · mínimo $0',monto:600000,pagado:true,fuente:'caja',badge:'bg',badgeLbl:'✓ Pagado',editable:false},
+  {id:'terapia',cat:'salud',nombre:'Terapia (4 sesiones)',meta:'$35.000 c/u · lunes',monto:140000,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Normal',editable:true},
+  {id:'wellhub',cat:'salud',nombre:'Wellhub (gimnasio)',meta:'$85.000 + $31.900',monto:116900,pagado:true,fuente:'tdc',badge:'bg',badgeLbl:'✓ Pagado',editable:false},
+  {id:'nacho',cat:'nacho',nombre:'Alimento Nacho',meta:'Pendiente · con Mastercard BNA',monto:79000,pagado:false,fuente:'tdc',badge:'bb',badgeLbl:'Pendiente',editable:true},
+  {id:'uade',cat:'edu',nombre:'UADE — Lic. Psicología',meta:'Desde agosto · $181.944/mes',monto:0,pagado:false,fuente:'caja',badge:'bb',badgeLbl:'Futuro',editable:false},
+];
+
+const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
+
+function recalc() {
+  const cats = {hogar:0,deudas:0,salud:0,nacho:0,edu:0};
+  let pend = 0, pag = 0;
+  GASTOS.forEach(g => {
+    cats[g.cat] = (cats[g.cat]||0) + g.monto;
+    if (g.fuente === 'caja') {
+      if (g.pagado) pag += g.monto;
+      else pend += g.monto;
+    }
+  });
+  const disp = CAJA - pend;
+  const total = pend + pag;
+  const pctComp = CAJA > 0 ? Math.min(100, Math.round((pend/CAJA)*100)) : 0;
+  const pctPag = total > 0 ? Math.min(100, Math.round((pag/total)*100)) : 0;
+
+  document.getElementById('hero-num').textContent = fmt(CAJA);
+  document.getElementById('st-comp').textContent = fmt(pend);
+  document.getElementById('st-disp').textContent = fmt(disp);
+  document.getElementById('st-disp').style.color = disp >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('st-pag').textContent = fmt(pag);
+  document.getElementById('pct-comp-txt').textContent = pctComp + '%';
+  document.getElementById('bar-comp').style.width = pctComp + '%';
+  document.getElementById('pct-pag-txt').textContent = pctPag + '%';
+  document.getElementById('bar-pag').style.width = pctPag + '%';
+
+  const maxCat = Math.max(...Object.values(cats), 1);
+  const catLabels = {hogar:'Hogar',deudas:'Deudas',salud:'Salud',nacho:'Nacho',edu:'Educación'};
+  document.getElementById('cat-bars').innerHTML = Object.entries(cats).map(([c,v]) => `
+    <div style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;font-family:'DM Mono',monospace;">
+        <span>${catLabels[c]}</span><span>${fmt(v)}</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" style="background:var(--blue);width:${Math.round((v/maxCat)*100)}%;"></div></div>
+    </div>`).join('');
+
+  ['hogar','deudas','salud','nacho','edu'].forEach(c => {
+    const el = document.getElementById('t-'+c);
+    if (el) el.textContent = fmt(cats[c]);
+  });
+}
+
+function renderGastos() {
+  ['hogar','deudas','salud','nacho','edu'].forEach(cat => {
+    const sec = document.getElementById('sec-'+cat);
+    if (!sec) return;
+    sec.innerHTML = '';
+    GASTOS.filter(g => g.cat === cat).forEach(g => {
+      const div = document.createElement('div');
+      div.className = 'gasto' + (g.pagado ? ' pagado' : '');
+      div.id = 'row-' + g.id;
+      div.innerHTML = `
+        <div class="gcheck ${g.pagado?'on':''}" onclick="togG('${g.id}')">${g.pagado?'✓':''}</div>
+        <div class="ginfo">
+          <div class="gname">${g.nombre}</div>
+          <div class="gmeta">${g.meta}</div>
+        </div>
+        <div class="gr">
+          <div class="gamount ${!g.editable?'nc':''}" id="amt-${g.id}" onclick="${g.editable?`editG('${g.id}')`:''}">${g.monto>0?fmt(g.monto):'A confirmar'}</div>
+          <span class="badge ${g.badge}">${g.badgeLbl}</span>
+        </div>`;
+      sec.appendChild(div);
+    });
+  });
+}
+
+function togG(id) {
+  const g = GASTOS.find(x => x.id === id);
+  if (!g) return;
+  g.pagado = !g.pagado;
+  const row = document.getElementById('row-'+id);
+  const chk = row.querySelector('.gcheck');
+  if (g.pagado) {
+    row.classList.add('pagado');
+    chk.classList.add('on'); chk.textContent = '✓';
+    if (g.monto > 0) addChat('ai', `✓ <strong>${g.nombre}</strong> marcado como pagado (${fmt(g.monto)}). Caja actualizada.`);
+  } else {
+    row.classList.remove('pagado');
+    chk.classList.remove('on'); chk.textContent = '';
+  }
+  recalc(); guardar();
+}
+
+function editG(id) {
+  const g = GASTOS.find(x => x.id === id);
+  if (!g) return;
+  amtTarget = id;
+  document.getElementById('m-title').textContent = 'Editar — ' + g.nombre;
+  document.getElementById('m-inp').value = g.monto || '';
+  document.getElementById('m-monto').classList.add('on');
+}
+
+function confirmarM() {
+  const v = parseInt(document.getElementById('m-inp').value);
+  if (!v) return cerrarM('m-monto');
+  const g = GASTOS.find(x => x.id === amtTarget);
+  if (g) {
+    g.monto = v;
+    const el = document.getElementById('amt-'+g.id);
+    if (el) el.textContent = fmt(v);
+  }
+  cerrarM('m-monto'); recalc(); guardar();
+}
+
+function abrirCaja() {
+  document.getElementById('caja-inp').value = CAJA;
+  document.getElementById('m-caja').classList.add('on');
+}
+
+function confirmarCaja() {
+  const v = parseInt(document.getElementById('caja-inp').value);
+  if (!v) return cerrarM('m-caja');
+  CAJA = v;
+  cerrarM('m-caja'); recalc(); guardar();
+  addChat('ai', `Caja actualizada a <strong>${fmt(v)}</strong>. Sistema recalculado.`);
+}
+
+function cerrarM(id) {
+  document.getElementById(id).classList.remove('on');
+  amtTarget = null;
+}
+
+document.querySelectorAll('.mbg').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('on'); });
+});
+
+function showPage(id, tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(t => t.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  tab.classList.add('on');
+}
+
+function addChat(tipo, texto) {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'cmsg' + (tipo==='user'?' muser':'');
+  d.innerHTML = `<div class="cav ${tipo==='user'?'u':''}">${tipo==='ai'?'AI':'GI'}</div><div class="cbub">${texto}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function enviar() {
+  const inp = document.getElementById('cinp');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  addChat('user', msg);
+  inp.value = '';
+  setTimeout(() => {
+    const l = msg.toLowerCase();
+    const pend = GASTOS.filter(g=>g.fuente==='caja'&&!g.pagado).reduce((a,g)=>a+g.monto,0);
+    let r = '';
+    if (l.includes('caja')||l.includes('saldo')||l.includes('cuánto')||l.includes('cuanto')) {
+      r = `Caja: <strong>${fmt(CAJA)}</strong> · Disponible real: <strong>${fmt(CAJA-pend)}</strong> · Comprometido: <strong>${fmt(pend)}</strong>`;
+    } else if (l.includes('bbva')) {
+      r = 'BBVA — mínimo $491.720 · vence 05/06. Llamar al 0800-333-0303 para confirmar si el Plan V cubrió el mínimo antes de pagar.';
+    } else if (l.includes('patagonia')) {
+      r = 'Patagonia $603.472 · vence 05/06 — transferencia manual obligatoria.';
+    } else if (l.includes('aguinaldo')) {
+      r = 'Aguinaldo ~$1.400.000 en junio. Plan: cancelar Patagonia P1 ($372.441) → libera $62.884/mes permanente → resto al fondo noviembre.';
+    } else {
+      r = 'Marcá los pagos en la pestaña Gastos para actualizar la caja automáticamente. Enviame documentos acá para analizarlos.';
+    }
+    addChat('ai', r);
+  }, 400);
+}
+
+document.getElementById('cinp').addEventListener('keydown', e => { if(e.key==='Enter') enviar(); });
+
+function updateObj() {
+  const v = parseInt(document.getElementById('obj-inp').value) || 0;
+  const pct = Math.min(100, (v/1500000)*100);
+  document.getElementById('obj-fill').style.width = pct+'%';
+  document.getElementById('obj-actual').textContent = fmt(v)+' ahorrado';
+  document.getElementById('obj-inp').value = '';
+  guardar();
+}
+
+function guardar() {
+  const data = {
+    v: 6, caja: CAJA,
+    gastos: GASTOS.map(g => ({id:g.id, monto:g.monto, pagado:g.pagado})),
+    obj: document.getElementById('obj-actual').textContent
+  };
+  try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){}
+}
+
+function cargar() {
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); } catch(e){}
+  if (!raw) return;
+  try {
+    const d = JSON.parse(raw);
+    if (d.v !== 6) return;
+    if (d.caja) CAJA = d.caja;
+    if (d.gastos) d.gastos.forEach(dg => {
+      const g = GASTOS.find(x => x.id === dg.id);
+      if (g) { g.monto = dg.monto; g.pagado = dg.pagado; }
+    });
+    if (d.obj) document.getElementById('obj-actual').textContent = d.obj;
+  } catch(e){}
+}
+
+// Fecha
+const HOY = new Date();
+document.getElementById('fecha-txt').textContent = HOY.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const COBRO = new Date('2026-06-29');
+const DIFF = Math.ceil((COBRO-HOY)/(1000*60*60*24));
+document.getElementById('dias-txt').textContent = DIFF > 0 ? `Cobro en ${DIFF} días` : 'Hoy cobrás';
+
+// Chat inicial
+addChat('ai', '<strong>Sistema activo.</strong><br><br>📍 BBVA mínimo $491.720 → llamar al banco antes de pagar<br>📍 Patagonia $603.472 → 05/06<br>📍 Expensas $219.233 → 12/06<br><br>Marcá pagos en Gastos → la caja se actualiza sola. Guardado automático activado.');
+
+cargar();
+renderGastos();
+recalc();
+</script>
+</body>
+</html>
